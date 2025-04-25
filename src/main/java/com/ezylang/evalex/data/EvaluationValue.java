@@ -152,6 +152,16 @@ public class EvaluationValue implements Comparable<EvaluationValue> {
   }
 
   /**
+   * Creates a new number value.
+   *
+   * @param value The BigDecimal value to use.
+   * @return the new number value.
+   */
+  public static EvaluationValue numberValue(Double value) {
+    return new EvaluationValue(value, DataType.NUMBER);
+  }
+
+  /**
    * Creates a new string value.
    *
    * @param value The String value to use.
@@ -333,6 +343,14 @@ public class EvaluationValue implements Comparable<EvaluationValue> {
     }
   }
 
+  public static EvaluationValue doubleOfString(String value) {
+    if (value.startsWith("0x") || value.startsWith("0X")) {
+        return EvaluationValue.numberValue(Double.valueOf(Long.parseLong(value.substring(2), 16)));
+    } else {
+      return EvaluationValue.numberValue(Double.valueOf(value));
+    }
+  }
+
   /**
    * Gets a {@link BigDecimal} representation of the value. If possible and needed, a conversion
    * will be made.
@@ -359,6 +377,36 @@ public class EvaluationValue implements Comparable<EvaluationValue> {
         return BigDecimal.ZERO;
     }
   }
+
+  /**
+   * Gets a {@link java.lang.Double} representation of the value. If possible and needed, a conversion
+   * will be made.
+   *
+   * <ul>
+   *   <li>Boolean <code>true</code> will return a 1.0, else 0.0.
+   * </ul>
+   *
+   * @return The {@link java.lang.Double} representation of the value, or 0.0 if
+   *     conversion is not possible.
+   */
+  public Double getDoubleValue() {
+    switch (getDataType()) {
+      case NUMBER:
+        if (value instanceof Double) { return (Double) value; }
+        return ((Number) value).doubleValue();
+      case BOOLEAN:
+        return (Boolean.TRUE.equals(value) ? 1.0 : 0.0);
+      case STRING:
+        return Boolean.parseBoolean((String) value) ? 1.0 : 0.0;
+      case NULL:
+        return null;
+      default:
+        return 0.0;
+    }
+  }
+
+
+
 
   /**
    * Gets a {@link String} representation of the value. If possible and needed, a conversion will be

@@ -25,6 +25,8 @@ import java.math.BigDecimal;
 import java.util.*;
 import lombok.Getter;
 
+import static com.ezylang.evalex.config.ExpressionConfiguration.InternalNumberRepresentation.BIG_DECIMAL;
+
 /**
  * Main class that allow creating, parsing, passing parameters and evaluating an expression string.
  *
@@ -87,7 +89,7 @@ public class Expression {
    */
   public EvaluationValue evaluate() throws EvaluationException, ParseException {
     EvaluationValue result = evaluateSubtree(getAbstractSyntaxTree());
-    if (result.isNumberValue()) {
+    if (result.isNumberValue() && configuration.getInternalNumberRepresentation() == BIG_DECIMAL) {
       BigDecimal bigDecimal = result.getNumberValue();
       if (configuration.getDecimalPlacesResult()
           != ExpressionConfiguration.DECIMAL_PLACES_ROUNDING_UNLIMITED) {

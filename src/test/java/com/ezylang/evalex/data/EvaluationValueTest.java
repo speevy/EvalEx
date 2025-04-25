@@ -31,6 +31,8 @@ import java.math.MathContext;
 import java.time.*;
 import java.util.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class EvaluationValueTest {
 
@@ -621,5 +623,20 @@ class EvaluationValueTest {
     assertThat(value.getDateTimeValue()).isEqualTo(dateTimeValue);
     assertThat(value.getDurationValue()).isEqualTo(durationValue);
     assertThat(value.getValue()).isInstanceOf(valueInstance);
+  }
+
+  @ParameterizedTest
+  @CsvSource({
+          "0x11,17.0",
+          "0X0A,10.0",
+          "42,42.0",
+          "12.34,12.34",
+          "-52,-52.0",
+          "-12.34,-12.34"
+  })
+  void doubleConversion(String value, double parsedValue) {
+    var x = EvaluationValue.doubleOfString("0x11").getDoubleValue();
+
+    assertThat(x).isEqualTo(17.0);
   }
 }

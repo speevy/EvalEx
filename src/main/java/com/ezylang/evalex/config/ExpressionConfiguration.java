@@ -154,6 +154,16 @@ import lombok.Getter;
 @Getter
 public class ExpressionConfiguration {
 
+  /**
+   * Defines how the numeric values are internally represented and operated:
+   *
+   * <ul>
+   *     <li>BIG_DECIMAL: Default behaviour. {@link java.math.BigDecimal} to be used when accuracy is critical.</li>
+   *     <li>DOUBLE: {@link java.lang.Double } to be used when performance is a priority and minor inaccuracies are tolerable.</li>
+   * </ul>
+   */
+  public enum InternalNumberRepresentation { BIG_DECIMAL, DOUBLE }
+
   /** The standard set constants for EvalEx. */
   public static final Map<String, EvaluationValue> StandardConstants =
       Collections.unmodifiableMap(getStandardConstants());
@@ -389,6 +399,10 @@ public class ExpressionConfiguration {
   @Builder.Default
   private final EvaluationValueConverterIfc evaluationValueConverter =
       new DefaultEvaluationValueConverter();
+
+  /** Set how numbers are represented and computed internally. */
+  @Builder.Default
+  private final InternalNumberRepresentation internalNumberRepresentation = InternalNumberRepresentation.BIG_DECIMAL;
 
   /**
    * Convenience method to create a default configuration.

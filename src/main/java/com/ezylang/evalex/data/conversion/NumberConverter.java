@@ -25,6 +25,15 @@ public class NumberConverter implements ConverterIfc {
 
   @Override
   public EvaluationValue convert(Object object, ExpressionConfiguration configuration) {
+    switch (configuration.getInternalNumberRepresentation()) {
+      case BIG_DECIMAL: return convertToBigDecimal(object, configuration);
+      case DOUBLE: return convertToDouble(object, configuration);
+      default: throw new UnsupportedOperationException("Unsupported number representation: "
+              + configuration.getInternalNumberRepresentation());
+    }
+  }
+
+  private EvaluationValue convertToBigDecimal(Object object, ExpressionConfiguration configuration) {
     BigDecimal bigDecimal;
 
     if (object instanceof BigDecimal) {
@@ -48,6 +57,20 @@ public class NumberConverter implements ConverterIfc {
     }
 
     return EvaluationValue.numberValue(bigDecimal);
+  }
+
+  private EvaluationValue convertToDouble(Object object, ExpressionConfiguration configuration) {
+    Double value;
+
+    if (object instanceof Double) {
+      value = (Double)object;
+    } else  if (object instanceof Number) {
+      value = ((Number)object).doubleValue();
+    } else {
+      throw illegalArgument(object);
+    }
+
+    return EvaluationValue.numberValue(value);
   }
 
   @Override
